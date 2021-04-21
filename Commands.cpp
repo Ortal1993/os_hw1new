@@ -116,6 +116,9 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   if (firstWord.compare("showpid") == 0) {
     return new ShowPidCommand(cmd_line, this->pid);
   }
+  else if (firstWord.compare("cd") == 0) {
+        return new ChangeDirCommand(cmd_line);
+    }
 
   return nullptr;
 }
@@ -131,7 +134,61 @@ void SmallShell::executeCommand(const char *cmd_line) {
 
 }
 
+Command::Command(const char *cmd_line){
+    this->cmd_line = _trim(string(this->cmd_line));
+    int lastWordEndPos = this->cmd_line.find_first_of(" \n");
+    int cmdReadLength = lastWordEndPos;
+    while (cmdReadLength < this->cmd_line.length() - 1) {
+        string nextArgument = this->cmd_line.substr(cmdReadLength + 1, this->cmd_line.find_first_of(" \n"));
+        this->arguments.push_back(nextArgument);
+        cmdReadLength += nextArgument.length();
+    }
+}
+
+std::string Command::getArgument(int argNum) {
+    if (argNum < 0 || argNum >= this->arguments.size()){
+        return "";
+    }
+    return this->arguments[argNum];
+}
+
+int Command::numberOfArgs() {
+    return this->arguments.size();
+}
+
 void ShowPidCommand::execute() {
     std::cout << "smash pid is: " << this->pid << endl;
+}
+ChangeDirCommand::ChangeDirCommand(const char *cmd_line, char **plastPwd, char** currentPwd) : BuiltInCommand(cmd_line) {
+
+}
+
+void ChangeDirCommand::execute() {
+    if (numberOfArgs() > 1){
+        //print error
+    }
+    else{
+        string arg = getArgument(0);
+        if (arg == "-" && lastPwd){
+            const char * path = *lastPwd;
+            int error = chdir(path);
+            if(error == -1){//syscall failed
+                //print error, errno
+            }
+            else{
+                lastPwd = const_cast<char **>(&path);
+            }
+        } else {
+            const char * path = arg.c_str();
+            int error = chdir(path);
+            if(error == -1){//syscall failed
+                //print error, errno
+            }
+            else{
+                lastPwd = const_cast<char **>(&path);
+            }
+        }
+
+    }
 }
 

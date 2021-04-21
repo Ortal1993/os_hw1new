@@ -9,14 +9,17 @@
 class Command{
 // TODO: Add your data members
   private:
-    const char* cmd_line;///maybe const char*?
+    std::string cmd_line;///maybe const char*?
+    std::vector<std::string> arguments;
  public:
-  Command(const char* cmd_line): cmd_line(cmd_line){}
+  Command(const char* cmd_line);
   virtual ~Command() {};
   virtual void execute() = 0;
   //virtual void prepare();
   //virtual void cleanup();
   // TODO: Add your extra methods if needed
+  std::string getArgument(int argNum);
+  int numberOfArgs();
 };
 
 class BuiltInCommand : public Command {
@@ -43,16 +46,20 @@ class PipeCommand : public Command {
 class RedirectionCommand : public Command {
  // TODO: Add your data members
  public:
-  explicit RedirectionCommand(const char* cmd_line);
+  explicit RedirectionCommand(const char* cmd_line) ;
   virtual ~RedirectionCommand() {}
   void execute() override;
   //void prepare() override;
   //void cleanup() override;
 };
 
-class ChangeDirCommand : public BuiltInCommand {
+class ChangeDirCommand : public BuiltInCommand {///cd
 // TODO: Add your data members public:
-  ChangeDirCommand(const char* cmd_line, char** plastPwd);
+private:
+    char** lastPwd;
+    char** currentPwd;
+public:
+  ChangeDirCommand(const char* cmd_line, char** plastPwd = nullptr, char** currentPwd = nullptr);
   virtual ~ChangeDirCommand() {}
   void execute() override;
 };
@@ -146,8 +153,9 @@ class CatCommand : public BuiltInCommand {
 class SmallShell {
  private:
     pid_t pid;
+    char** lastPwd;
   // TODO: Add your data members
-  SmallShell(): pid(getpid()){}
+  SmallShell(): pid(getpid()), lastPwd(nullptr){}///getpid is always successful according to man
  public:
   Command *CreateCommand(const char* cmd_line);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor
