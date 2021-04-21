@@ -58,19 +58,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /home/student/Public/clion-2021.1/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = /home/student/Downloads/clion/clion-2021.1/bin/cmake/linux/bin/cmake
 
 # The command to remove a file.
-RM = /home/student/Public/clion-2021.1/bin/cmake/linux/bin/cmake -E rm -f
+RM = /home/student/Downloads/clion/clion-2021.1/bin/cmake/linux/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/student/Documents/hw1
+CMAKE_SOURCE_DIR = /home/student/CLionProjects/os_hw1new
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/student/Documents/hw1/cmake-build-debug
+CMAKE_BINARY_DIR = /home/student/CLionProjects/os_hw1new/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -78,7 +78,7 @@ CMAKE_BINARY_DIR = /home/student/Documents/hw1/cmake-build-debug
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/home/student/Public/clion-2021.1/bin/cmake/linux/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/home/student/Downloads/clion/clion-2021.1/bin/cmake/linux/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -89,7 +89,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/home/student/Public/clion-2021.1/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/home/student/Downloads/clion/clion-2021.1/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -99,9 +99,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Documents/hw1/cmake-build-debug/CMakeFiles /home/student/Documents/hw1/cmake-build-debug//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/CLionProjects/os_hw1new/cmake-build-debug/CMakeFiles /home/student/CLionProjects/os_hw1new/cmake-build-debug//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Documents/hw1/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/CLionProjects/os_hw1new/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -142,32 +142,86 @@ hw1/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/build
 .PHONY : hw1/fast
 
-main.o: main.cpp.o
+Commands.o: Commands.cpp.o
 
-.PHONY : main.o
+.PHONY : Commands.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/main.cpp.o
-.PHONY : main.cpp.o
+Commands.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/Commands.cpp.o
+.PHONY : Commands.cpp.o
 
-main.i: main.cpp.i
+Commands.i: Commands.cpp.i
 
-.PHONY : main.i
+.PHONY : Commands.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/main.cpp.i
-.PHONY : main.cpp.i
+Commands.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/Commands.cpp.i
+.PHONY : Commands.cpp.i
 
-main.s: main.cpp.s
+Commands.s: Commands.cpp.s
 
-.PHONY : main.s
+.PHONY : Commands.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/main.cpp.s
-.PHONY : main.cpp.s
+Commands.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/Commands.cpp.s
+.PHONY : Commands.cpp.s
+
+signals.o: signals.cpp.o
+
+.PHONY : signals.o
+
+# target to build an object file
+signals.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/signals.cpp.o
+.PHONY : signals.cpp.o
+
+signals.i: signals.cpp.i
+
+.PHONY : signals.i
+
+# target to preprocess a source file
+signals.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/signals.cpp.i
+.PHONY : signals.cpp.i
+
+signals.s: signals.cpp.s
+
+.PHONY : signals.s
+
+# target to generate assembly for a file
+signals.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/signals.cpp.s
+.PHONY : signals.cpp.s
+
+smash.o: smash.cpp.o
+
+.PHONY : smash.o
+
+# target to build an object file
+smash.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/smash.cpp.o
+.PHONY : smash.cpp.o
+
+smash.i: smash.cpp.i
+
+.PHONY : smash.i
+
+# target to preprocess a source file
+smash.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/smash.cpp.i
+.PHONY : smash.cpp.i
+
+smash.s: smash.cpp.s
+
+.PHONY : smash.s
+
+# target to generate assembly for a file
+smash.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw1.dir/build.make CMakeFiles/hw1.dir/smash.cpp.s
+.PHONY : smash.cpp.s
 
 # Help Target
 help:
@@ -178,9 +232,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... hw1"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... Commands.o"
+	@echo "... Commands.i"
+	@echo "... Commands.s"
+	@echo "... signals.o"
+	@echo "... signals.i"
+	@echo "... signals.s"
+	@echo "... smash.o"
+	@echo "... smash.i"
+	@echo "... smash.s"
 .PHONY : help
 
 

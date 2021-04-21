@@ -20,6 +20,9 @@ using namespace std;
 #define FUNC_EXIT()
 #endif
 
+const std::string WHITESPACE = " \n\r\t\f\v";
+
+
 string _ltrim(const std::string& s)
 {
   size_t start = s.find_first_not_of(WHITESPACE);
@@ -77,9 +80,9 @@ void _removeBackgroundSign(char* cmd_line) {
 
 // TODO: Add your implementation for classes in Commands.h 
 
-SmallShell::SmallShell() {
+//SmallShell::SmallShell() {
 // TODO: add your implementation
-}
+//}
 
 SmallShell::~SmallShell() {
 // TODO: add your implementation
@@ -106,6 +109,14 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
     return new ExternalCommand(cmd_line);
   }
   */
+
+  string cmd_s = _trim(string(cmd_line));
+  string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
+
+  if (firstWord.compare("showpid") == 0) {
+    return new ShowPidCommand(cmd_line, this->pid);
+  }
+
   return nullptr;
 }
 
@@ -115,4 +126,12 @@ void SmallShell::executeCommand(const char *cmd_line) {
   // Command* cmd = CreateCommand(cmd_line);
   // cmd->execute();
   // Please note that you must fork smash process for some commands (e.g., external commands....)
+    Command* cmd = CreateCommand(cmd_line);
+    cmd->execute();
+
 }
+
+void ShowPidCommand::execute() {
+    std::cout << "smash pid is: " << this->pid << endl;
+}
+

@@ -2,15 +2,17 @@
 #define SMASH_COMMAND_H_
 
 #include <vector>
-
+#include <unistd.h>
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
 
-class Command {
+class Command{
 // TODO: Add your data members
+  private:
+    const char* cmd_line;///maybe const char*?
  public:
-  Command(const char* cmd_line);
-  virtual ~Command();
+  Command(const char* cmd_line): cmd_line(cmd_line){}
+  virtual ~Command() {};
   virtual void execute() = 0;
   //virtual void prepare();
   //virtual void cleanup();
@@ -19,7 +21,7 @@ class Command {
 
 class BuiltInCommand : public Command {
  public:
-  BuiltInCommand(const char* cmd_line);
+  BuiltInCommand(const char* cmd_line): Command(cmd_line){}
   virtual ~BuiltInCommand() {}
 };
 
@@ -63,9 +65,10 @@ class GetCurrDirCommand : public BuiltInCommand {
 };
 
 class ShowPidCommand : public BuiltInCommand {
+    pid_t pid;
  public:
-  ShowPidCommand(const char* cmd_line);
-  virtual ~ShowPidCommand() {}
+  ShowPidCommand(const char* cmd_line, pid_t pid): BuiltInCommand(cmd_line), pid(pid){}
+  virtual ~ShowPidCommand() = default;
   void execute() override;
 };
 
@@ -142,8 +145,9 @@ class CatCommand : public BuiltInCommand {
 
 class SmallShell {
  private:
+    pid_t pid;
   // TODO: Add your data members
-  SmallShell();
+  SmallShell(): pid(getpid()){}
  public:
   Command *CreateCommand(const char* cmd_line);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor
