@@ -112,18 +112,35 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   */
 
   string cmd_s = _trim(string(cmd_line));
-  string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
+  string firstWord = cmd_s.substr(0, cmd_s.find_first_of(WHITESPACE));///originally \n
 
-  if (firstWord.compare("showpid") == 0) {
-    return new ShowPidCommand(cmd_line, this->pid);
+  if(firstWord.compare("chprompt") == 0){
+      return new RedirectionCommand(cmd_line, &this->prompt);
   }
-  else if (firstWord.compare("cd") == 0) {
-        return new ChangeDirCommand(cmd_line, &this->lastPwd);
-    }
+  else if (firstWord.compare("showpid") == 0) {
+      return new ShowPidCommand(cmd_line, this->pid);
+  }
   else if (firstWord.compare("pwd") == 0) {
       return new GetCurrDirCommand(cmd_line);
   }
-
+  else if (firstWord.compare("cd") == 0) {
+      return new ChangeDirCommand(cmd_line, &this->lastPwd);
+  }
+  else if (firstWord.compare("jobs") == 0){
+      return new JobsCommand(cmd_line, &this->jobsList);
+  }
+  else if (firstWord.compare("kill") == 0){
+      return new KillCommand(cmd_line, &this->jobsList);
+  }
+  else if (firstWord.compare("fg") == 0){
+      return new ForegroundCommand(cmd_line, &this->jobsList);
+  }
+  else if (firstWord.compare("bg") == 0){
+      return new BackgroundCommand(cmd_line, &this->jobsList);
+  }
+  else if (firstWord.compare("quit") == 0){
+      return new QuitCommand(cmd_line, &this->jobsList);
+  }
   return nullptr;
 }
 
@@ -135,35 +152,57 @@ void SmallShell::executeCommand(const char *cmd_line) {
   // Please note that you must fork smash process for some commands (e.g., external commands....)
     Command* cmd = CreateCommand(cmd_line);
     cmd->execute();
-
+    ///delete cmd;
 }
 
-Command::Command(const char *cmd_line){
-    this->cmd_line = _trim(string(this->cmd_line));
-    int lastWordEndPos = this->cmd_line.find_first_of(" \n");
-    int cmdReadLength = lastWordEndPos;
-    while (cmdReadLength < this->cmd_line.length() - 1) {
-        string nextArgument = this->cmd_line.substr(cmdReadLength + 1, this->cmd_line.find_first_of(" \n"));
-        this->arguments.push_back(nextArgument);
-        cmdReadLength += nextArgument.length();
+std::string SmallShell::GetPrompt() {
+    return this->prompt;
+}
+
+Command::Command(const char *cmd_line): cmd_line(cmd_line), arguments(arguments){
+    string toParse = (string)this->cmd_line;
+    toParse = _trim(toParse);
+    while(toParse.length() > 0){///arguments[0] = command
+        int argLength = toParse.find_first_of(WHITESPACE);
+        if(argLength == -1){
+            string currArgument = toParse.substr(0, argLength);
+            this->arguments.push_back(currArgument);
+            break;
+        }
+        string currArgument = toParse.substr(0, argLength);
+        this->arguments.push_back(currArgument);
+        toParse = toParse.substr(argLength + 1);
+        toParse = _ltrim(toParse);
     }
 }
 
-std::string Command::getArgument(int argNum) {
-    if (argNum < 0 || argNum >= this->arguments.size()){
+string Command::GetArgument(int argNum) {
+    /*if (argNum < 1 || argNum > this->GetNumOfArgs()){///arguments[0] = command
         return "";
-    }
+    }*/
     return this->arguments[argNum];
 }
 
-int Command::numberOfArgs() {
+int Command::GetNumOfArgs() {
     return this->arguments.size();
 }
 
+///func 1 - showpid
 void ShowPidCommand::execute() {
     std::cout << "smash pid is: " << this->pid << endl;
 }
 
+///func 2 - chprompt
+void RedirectionCommand::execute(){
+    int numOfArgs = this->GetNumOfArgs();
+    if (numOfArgs == 1){///arguments[0] = command
+        *(this->ptrPrompt) = "smash";
+    }else{///numOfArgs > 1
+        *(this->ptrPrompt) = this->GetArgument(1);
+    }
+}
+
+///func 3 - pwd
 void GetCurrDirCommand::execute() {
     char cwd[PATH_MAX];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
@@ -173,17 +212,18 @@ void GetCurrDirCommand::execute() {
     }
 }
 
+///func 4 - cd
 ChangeDirCommand::ChangeDirCommand(const char *cmd_line, char** lastPwd, char** currentPwd) :
-BuiltInCommand(cmd_line), lastPwd(lastPwd), currentPwd(currentPwd){
-
+                BuiltInCommand(cmd_line), lastPwd(lastPwd), currentPwd(currentPwd){
 }
 
 void ChangeDirCommand::execute() {
-    if (numberOfArgs() > 1){
+    int numOfArgs = this->GetNumOfArgs();
+    if (numOfArgs > 1){
         //print error
         std::cout << "error: "  << endl;
-    }else if (numberOfArgs() == 1){
-        string arg = getArgument(0);
+    }else if (numOfArgs == 1){
+        string arg = this->GetArgument(0);
         if (arg == "-" && *lastPwd){
             const char * path = *lastPwd;
             int error = chdir(path);
@@ -214,10 +254,55 @@ void ChangeDirCommand::execute() {
                     *lastPwd = *currentPwd;
                 }
                 *currentPwd = const_cast<char *>(path);
-
             }
         }
-
     }
 }
 
+///func 5 - jobs
+
+///func 6 - kill
+void KillCommand::execute() {
+    int numOfArgs = this->GetNumOfArgs();
+    if (numOfArgs != 3) {///arguments[0] = command ///if we kill -  9 7 - is it legal?
+        cerr << "smash error: kill: invalid arguments" << endl;
+    }
+    string numStr = GetArgument(1);
+    int i = 0;
+    while(numStr.at(i) == '-'){
+        i++;
+    }
+    if(i == 1){
+        numStr = numStr.substr(1);
+        int num = stoi(numStr);
+        if(num < 1 || num > 64){
+            //print error;
+        }else{
+            string jobStr = GetArgument(2);
+            int jobId = stoi(jobStr); ///std::invalid_argument
+            if(ptrJobs->GetJobsMap()->find(jobId) != ptrJobs->GetJobsMap()->end()){
+                cout << "signal number " << num << "was sent to pid" << ptrJobs->GetJobsMap()->find(jobId)->second.GetProcessID();
+                ptrJobs->GetJobsMap()->find(jobId)->second.SetSignal(num);///we need it?
+            }else{
+                cerr << "smash error: kill: job-id " << jobId << "does not exist" << endl;
+            }
+        }
+    }else{
+        //print error?
+    }
+}
+
+///func 7 - fg
+
+///func 8 - bg
+
+///func 9 - quit
+void QuitCommand::execute() {
+
+}
+
+/*const char* SmashExceptions::what() const noexcept{
+    return what_message.c_str();
+}
+
+KillInvalidArg::KillInvalidArg() : SmashExceptions("smash error: kill: invalid arguments"){}*/
