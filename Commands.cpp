@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
+#include <limits.h>
 
 using namespace std;
 
@@ -117,8 +118,11 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
     return new ShowPidCommand(cmd_line, this->pid);
   }
   else if (firstWord.compare("cd") == 0) {
-        return new ChangeDirCommand(cmd_line);
+        return new ChangeDirCommand(cmd_line, &this->lastPwd);
     }
+  else if (firstWord.compare("pwd") == 0) {
+      return new GetCurrDirCommand(cmd_line);
+  }
 
   return nullptr;
 }
@@ -159,33 +163,58 @@ int Command::numberOfArgs() {
 void ShowPidCommand::execute() {
     std::cout << "smash pid is: " << this->pid << endl;
 }
-ChangeDirCommand::ChangeDirCommand(const char *cmd_line, char **plastPwd, char** currentPwd) : BuiltInCommand(cmd_line) {
+
+void GetCurrDirCommand::execute() {
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        std::cout << "Current working dir: " << cwd << endl;
+    } else {
+        std::cout << "error: "  << endl;
+    }
+}
+
+ChangeDirCommand::ChangeDirCommand(const char *cmd_line, char** lastPwd, char** currentPwd) :
+BuiltInCommand(cmd_line), lastPwd(lastPwd), currentPwd(currentPwd){
 
 }
 
 void ChangeDirCommand::execute() {
     if (numberOfArgs() > 1){
         //print error
-    }
-    else{
+        std::cout << "error: "  << endl;
+    }else if (numberOfArgs() == 1){
         string arg = getArgument(0);
-        if (arg == "-" && lastPwd){
+        if (arg == "-" && *lastPwd){
             const char * path = *lastPwd;
             int error = chdir(path);
             if(error == -1){//syscall failed
                 //print error, errno
+                std::cout << "error: "  << endl;
             }
             else{
-                lastPwd = const_cast<char **>(&path);
+                char* temp = *lastPwd;
+                *lastPwd = *currentPwd;
+                *currentPwd = temp;
             }
+        } if (arg == "-" && !*lastPwd){
+            //print error no OLDPWD
+            std::cout << "error: "  << endl;
         } else {
             const char * path = arg.c_str();
             int error = chdir(path);
-            if(error == -1){//syscall failed
+            if(error == -1){//syscall failedl
                 //print error, errno
+                std::cout << "error: "  << endl;
             }
             else{
-                lastPwd = const_cast<char **>(&path);
+                if (*currentPwd){//if *currentPwd is null, then it is the first time doing cd
+                    *lastPwd = nullptr;
+                }
+                else{
+                    *lastPwd = *currentPwd;
+                }
+                *currentPwd = const_cast<char *>(path);
+
             }
         }
 

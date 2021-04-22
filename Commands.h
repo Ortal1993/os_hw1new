@@ -64,9 +64,9 @@ public:
   void execute() override;
 };
 
-class GetCurrDirCommand : public BuiltInCommand {
+class GetCurrDirCommand : public BuiltInCommand {///pwd
  public:
-  GetCurrDirCommand(const char* cmd_line);
+  GetCurrDirCommand(const char* cmd_line): BuiltInCommand(cmd_line){}
   virtual ~GetCurrDirCommand() {}
   void execute() override;
 };
@@ -153,9 +153,10 @@ class CatCommand : public BuiltInCommand {
 class SmallShell {
  private:
     pid_t pid;
-    char** lastPwd;
+    char* lastPwd;
+    char* currentPwd;
   // TODO: Add your data members
-  SmallShell(): pid(getpid()), lastPwd(nullptr){}///getpid is always successful according to man
+  SmallShell(): pid(getpid()), lastPwd(nullptr), currentPwd(nullptr){}///getpid is always successful according to man
  public:
   Command *CreateCommand(const char* cmd_line);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor
