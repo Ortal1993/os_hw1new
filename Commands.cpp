@@ -115,18 +115,18 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(WHITESPACE));///originally \n
 
   if(firstWord.compare("chprompt") == 0){
-      return new RedirectionCommand(cmd_line, &this->prompt);
+      return new RedirectionCommand(cmd_line);
   }
   else if (firstWord.compare("showpid") == 0) {
-      return new ShowPidCommand(cmd_line, this->pid);
+      return new ShowPidCommand(cmd_line);
   }
   else if (firstWord.compare("pwd") == 0) {
       return new GetCurrDirCommand(cmd_line);
   }
   else if (firstWord.compare("cd") == 0) {
-      return new ChangeDirCommand(cmd_line, &this->lastPwd);
+      return new ChangeDirCommand(cmd_line);
   }
-  else if (firstWord.compare("jobs") == 0){
+  /*else if (firstWord.compare("jobs") == 0){
       return new JobsCommand(cmd_line, &this->jobsList);
   }
   else if (firstWord.compare("kill") == 0){
@@ -140,7 +140,7 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   }
   else if (firstWord.compare("quit") == 0){
       return new QuitCommand(cmd_line, &this->jobsList);
-  }
+  }*/
   return nullptr;
 }
 
@@ -159,7 +159,9 @@ std::string SmallShell::GetPrompt() {
     return this->prompt;
 }
 
-Command::Command(const char *cmd_line): cmd_line(cmd_line), arguments(arguments){
+Command::Command(const char *cmd_line): cmd_line(cmd_line), sms(SmallShell::getInstance()){
+    //this->sms = SmallShell::getInstance();
+
     string toParse = (string)this->cmd_line;
     toParse = _trim(toParse);
     while(toParse.length() > 0){///arguments[0] = command
@@ -189,16 +191,17 @@ int Command::GetNumOfArgs() {
 
 ///func 1 - showpid
 void ShowPidCommand::execute() {
-    std::cout << "smash pid is: " << this->pid << endl;
+    std::cout << "smash pid is: " << getSmallShell().getPid() << endl;
 }
 
 ///func 2 - chprompt
 void RedirectionCommand::execute(){
     int numOfArgs = this->GetNumOfArgs();
+    SmallShell& sm = getSmallShell();
     if (numOfArgs == 1){///arguments[0] = command
-        *(this->ptrPrompt) = "smash";
+       sm.setPrompt("smash");
     }else{///numOfArgs > 1
-        *(this->ptrPrompt) = this->GetArgument(1);
+        sm.setPrompt(this->GetArgument(1));
     }
 }
 
@@ -213,47 +216,49 @@ void GetCurrDirCommand::execute() {
 }
 
 ///func 4 - cd
-ChangeDirCommand::ChangeDirCommand(const char *cmd_line, char** lastPwd, char** currentPwd) :
-                BuiltInCommand(cmd_line), lastPwd(lastPwd), currentPwd(currentPwd){
-}
+//ChangeDirCommand::ChangeDirCommand(const char *cmd_line) :
+                //BuiltInCommand(cmd_line){
+//}
 
 void ChangeDirCommand::execute() {
     int numOfArgs = this->GetNumOfArgs();
-    if (numOfArgs > 1){
+    SmallShell& sm = getSmallShell();
+    string lastPwd = sm.getLastPwd();
+    string currentPwd = sm.getCurrentPwd();
+    if (numOfArgs > 2){
         //print error
-        std::cout << "error: "  << endl;
-    }else if (numOfArgs == 1){
-        string arg = this->GetArgument(0);
-        if (arg == "-" && *lastPwd){
-            const char * path = *lastPwd;
+        std::cerr << "smash error: cd: too many arguments" << endl;
+    }else if (numOfArgs == 2){
+        string arg = this->GetArgument(1);
+        if (arg == "-" && lastPwd != ""){
+            const char * path = lastPwd.c_str();
             int error = chdir(path);
             if(error == -1){//syscall failed
                 //print error, errno
-                std::cout << "error: "  << endl;
+                std::cout << "error: syscall failed. lastPWD: " << lastPwd << ", path: " << path << endl;
             }
             else{
-                char* temp = *lastPwd;
-                *lastPwd = *currentPwd;
-                *currentPwd = temp;
+                sm.setLastPwd(currentPwd);
+                sm.setCurrentPwd(lastPwd);
             }
-        } if (arg == "-" && !*lastPwd){
+        } else if (arg == "-" && lastPwd == ""){
             //print error no OLDPWD
-            std::cout << "error: "  << endl;
+            std::cout << "smash error: cd: OLDPWD not set"  << endl;
         } else {
             const char * path = arg.c_str();
             int error = chdir(path);
             if(error == -1){//syscall failedl
                 //print error, errno
-                std::cout << "error: "  << endl;
+                std::cout << "error: sysCallFail2"  << endl;
             }
             else{
-                if (*currentPwd){//if *currentPwd is null, then it is the first time doing cd
-                    *lastPwd = nullptr;
+                if (currentPwd == ""){//if *currentPwd is null, then it is the first time doing cd
+                    sm.setLastPwd("");
                 }
                 else{
-                    *lastPwd = *currentPwd;
+                    sm.setLastPwd(currentPwd);
                 }
-                *currentPwd = const_cast<char *>(path);
+                sm.setCurrentPwd(const_cast<char *>(path));
             }
         }
     }
@@ -262,7 +267,7 @@ void ChangeDirCommand::execute() {
 ///func 5 - jobs
 
 ///func 6 - kill
-void KillCommand::execute() {
+/*void KillCommand::execute() {
     int numOfArgs = this->GetNumOfArgs();
     if (numOfArgs != 3) {///arguments[0] = command ///if we kill -  9 7 - is it legal?
         cerr << "smash error: kill: invalid arguments" << endl;
@@ -290,16 +295,16 @@ void KillCommand::execute() {
     }else{
         //print error?
     }
-}
+}*/
 
 ///func 7 - fg
 
 ///func 8 - bg
 
 ///func 9 - quit
-void QuitCommand::execute() {
+/*void QuitCommand::execute() {
 
-}
+}*/
 
 /*const char* SmashExceptions::what() const noexcept{
     return what_message.c_str();
