@@ -126,21 +126,21 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   else if (firstWord.compare("cd") == 0) {
       return new ChangeDirCommand(cmd_line);
   }
-  /*else if (firstWord.compare("jobs") == 0){
-      return new JobsCommand(cmd_line, &this->jobsList);
+  else if (firstWord.compare("jobs") == 0){
+      return new JobsCommand(cmd_line);
   }
   else if (firstWord.compare("kill") == 0){
-      return new KillCommand(cmd_line, &this->jobsList);
+      return new KillCommand(cmd_line);
   }
   else if (firstWord.compare("fg") == 0){
-      return new ForegroundCommand(cmd_line, &this->jobsList);
+      return new ForegroundCommand(cmd_line);
   }
   else if (firstWord.compare("bg") == 0){
-      return new BackgroundCommand(cmd_line, &this->jobsList);
+      return new BackgroundCommand(cmd_line);
   }
   else if (firstWord.compare("quit") == 0){
-      return new QuitCommand(cmd_line, &this->jobsList);
-  }*/
+      return new QuitCommand(cmd_line);
+  }
   return nullptr;
 }
 
@@ -220,9 +220,6 @@ void GetCurrDirCommand::execute() {
 }
 
 ///func 4 - cd
-//ChangeDirCommand::ChangeDirCommand(const char *cmd_line) :
-                //BuiltInCommand(cmd_line){
-//}
 void ChangeDirCommand::execute() {
     int numOfArgs = this->GetNumOfArgs();
     SmallShell& sm = getSmallShell();
@@ -270,6 +267,9 @@ void ChangeDirCommand::execute() {
 }
 
 ///func 5 - jobs
+void JobsCommand::execute() {
+
+}
 
 ///func 6 - kill
 void KillCommand::execute() {
@@ -282,52 +282,73 @@ void KillCommand::execute() {
     while(signumStr.at(i) == '-'){
         i++;
     }
-    if(i == 0 || i > 1){
+    if(i == 0 || i > 1) {
         cerr << "smash error: kill: invalid arguments" << endl;
+    }
     if(i == 1){
         signumStr = signumStr.substr(1);
-        int num = stoi(signumStr);
-
-        string jobidStr = GetArgument(2);
-        int jobId = stoi(jobidStr); ///std::invalid_argument
+        int signum = stoi(signumStr);
+        string jobIdStr = GetArgument(2);
+        int jobId = stoi(jobIdStr); ///std::invalid_argument
         if(getSmallShell().getJobsList().getJobById(jobId) != nullptr){
             int processID = getSmallShell().getJobsList().getJobById(jobId)->GetProcessID();
-            cout << "signal number " << num << "was sent to pid" << processID;
-            ptrJobs->GetJobsMap()->find(jobId)->second.SetSignal(num);///we need it?
-            int error = kill();
+            cout << "signal number " << signum << "was sent to pid" << processID;
+            int error = kill(processID, signum);
             if(error == -1){
-                perror();
-            }
-            }else{
-                cerr << "smash error: kill: job-id " << jobId << "does not exist" << endl;
+                perror("smash error: kill failed");
             }
         }
     }
 }
 
 ///func 7 - fg
+void ForegroundCommand::execute() {
+
+}
 
 ///func 8 - bg
+void BackgroundCommand::execute() {
+
+}
 
 ///func 9 - quit
-/*void QuitCommand::execute() {
+void QuitCommand::execute() {
+    int numOfArgs = this->GetNumOfArgs();
+    if(numOfArgs == 1 || numOfArgs > 1 && this->GetArgument(1) != "kill"){
+        exit(0xff);///???
+    }
+    if(numOfArgs > 1 && this->GetArgument(1) == "kill"){
+        SmallShell& sm = getSmallShell();
+        int numJobs = sm.getJobsList().jobsMap.size();
+        cout << "smash: sending SIGKILL signal to " << numJobs << " jobs:" << endl;
+        for(map<int, JobsList::JobEntry>::iterator it = sm.getJobsList().jobsMap.begin(); it != sm.getJobsList().jobsMap.end(); ++it){
+            int currJobPid = it->second.GetProcessID();
+            cout << currJobPid << ": " << it->second.GetCommand() << endl;
+            kill(currJobPid, 9);
+        }
+    }
+}
 
-}*/
+
 
 /*const char* SmashExceptions::what() const noexcept{
     return what_message.c_str();
 }
 
 KillInvalidArg::KillInvalidArg() : SmashExceptions("smash error: kill: invalid arguments"){}*/
+
 JobsList::JobEntry* JobsList::getJobById(int jobId) {
-    pair<int, JobEntry> p = *this->jobsMap.find(jobId);
-    if(p.first != (jobsMap.end())->first){
-        map<int, class JobEntry>::iterator it = this->jobsMap.find(jobId);
+    if(this->jobsMap.find(jobId)->first != jobsMap.end()->first){
+        return &this->jobsMap.find(jobId)->second;
     }else{
         return nullptr;
     }
 }
 
-/*map<int, class JobsList::JobEntry>& JobsList::GetJobsMap() {
-    return *this->jobsMap;
-}*/
+int JobsList::JobEntry::GetProcessID() {
+    return this->processID;
+}
+
+std::string JobsList::JobEntry::GetCommand() {
+    return this->command;
+}

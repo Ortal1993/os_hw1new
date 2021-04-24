@@ -91,27 +91,27 @@ class ChangeDirCommand : public BuiltInCommand {
 
 class JobsList {///it should also be created once, no?
     //private:
-
-    public:///???????
+    public:
         class JobEntry {
             private:
                 /*int jobID;*/
-                int processID;
                 /*int signal;*/
-                char* command;
+                int processID;
+                std::string command;
                 time_t time;
                 STATUS status;
             public:
-                JobEntry();
-                ~JobEntry();
+                JobEntry():processID(processID), command(command), time(time), status(status){};///to change!
+                ~JobEntry() = default;
                 int GetProcessID();
-                void SetSignal(int signal);
+                std::string GetCommand();
+                /*void SetSignal(int signal);*/
         };
-    std::map<int, JobEntry> jobsMap;///the key is jobID
-    int nextID;
+        std::map<int, JobEntry> jobsMap;///the key is jobID
+        int nextID;
     public:
-        JobsList():jobsMap(jobsMap), nextID(0){};
-        ~JobsList();
+        JobsList(){};
+        ~JobsList() = default;
         void addJob(Command* cmd, bool isStopped = false);
         void printJobsList();
         void killAllJobs();
@@ -120,19 +120,17 @@ class JobsList {///it should also be created once, no?
         void removeJobById(int jobId);
         JobEntry* getLastJob(int* lastJobId);
         JobEntry* getLastStoppedJob(int *jobId);///???
-        std::map<int, class JobsList::JobEntry>& GetJobsMap();
         // TODO: Add extra methods or modify exisitng ones as needed
 };
 
 ///func 5 - jobs
-/*class JobsCommand : public BuiltInCommand {
-    private:
-        JobsList* jobs;///When we declare a member of a class as static it means no matter how many objects of the class are created, there is only one copy of the static member.
+class JobsCommand : public BuiltInCommand {
+        ///When we declare a member of a class as static it means no matter how many objects of the class are created, there is only one copy of the static member.
     public:
-        JobsCommand(const char* cmd_line, JobsList* jobs);
+        JobsCommand(const char* cmd_line): BuiltInCommand(cmd_line){};
         virtual ~JobsCommand() {}
         void execute() override;
-};*/
+};
 
 ///func 6 - kill
 class KillCommand : public BuiltInCommand {
@@ -143,34 +141,29 @@ class KillCommand : public BuiltInCommand {
 };
 
 ///func 7 - fg
-/*class ForegroundCommand : public BuiltInCommand {
-    private:
-        JobsList* ptrJobs;
+class ForegroundCommand : public BuiltInCommand {
     public:
-        ForegroundCommand(const char* cmd_line, JobsList* jobs);
+        ForegroundCommand(const char* cmd_line): BuiltInCommand(cmd_line){};
         virtual ~ForegroundCommand() {}
         void execute() override;
-};*/
+};
 
 ///func 8 - bg
-/*class BackgroundCommand : public BuiltInCommand {
-    private:
-        JobsList* ptrJobs;
+class BackgroundCommand : public BuiltInCommand {
     public:
-        BackgroundCommand(const char* cmd_line, JobsList* jobs);
+        BackgroundCommand(const char* cmd_line): BuiltInCommand(cmd_line){};
         virtual ~BackgroundCommand() {}
         void execute() override;
-};*/
+};
 
 ///func 9 - quit
-/*class QuitCommand : public BuiltInCommand {
-    private:
-        JobsList* ptrJobs;
+class QuitCommand : public BuiltInCommand {
+
     public:
-        QuitCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), jobs(jobs){};
+        QuitCommand(const char* cmd_line): BuiltInCommand(cmd_line){};
         virtual ~QuitCommand() {}
         void execute() override;
-};*/
+};
 
 ///special commands
 class PipeCommand : public Command {
