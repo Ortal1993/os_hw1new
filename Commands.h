@@ -90,9 +90,8 @@ class ChangeDirCommand : public BuiltInCommand {
 };
 
 class JobsList {///it should also be created once, no?
-    private:
-        std::map<int, class JobEntry> jobsMap;///the key is jobID
-        int nextID;
+    //private:
+
     public:///???????
         class JobEntry {
             private:
@@ -108,6 +107,8 @@ class JobsList {///it should also be created once, no?
                 int GetProcessID();
                 void SetSignal(int signal);
         };
+    std::map<int, JobEntry> jobsMap;///the key is jobID
+    int nextID;
     public:
         JobsList():jobsMap(jobsMap), nextID(0){};
         ~JobsList();

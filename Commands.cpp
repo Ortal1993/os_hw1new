@@ -320,8 +320,8 @@ void KillCommand::execute() {
 
 KillInvalidArg::KillInvalidArg() : SmashExceptions("smash error: kill: invalid arguments"){}*/
 JobsList::JobEntry* JobsList::getJobById(int jobId) {
-    pair<int, class JobsList::JobEntry> p = *this->jobsMap.find(jobId);
-    if(this->jobsMap.find(jobId) != *(jobsMap.end())){
+    pair<int, JobEntry> p = *this->jobsMap.find(jobId);
+    if(p.first != (jobsMap.end())->first){
         map<int, class JobEntry>::iterator it = this->jobsMap.find(jobId);
     }else{
         return nullptr;
