@@ -105,6 +105,8 @@ class JobsList {///it should also be created once, no?
                 ~JobEntry() = default;
                 int GetProcessID();
                 std::string GetCommand();
+                STATUS getStatus();
+                time_t getTime();
                 /*void SetSignal(int signal);*/
         };
         std::map<int, JobEntry> jobsMap;///the key is jobID

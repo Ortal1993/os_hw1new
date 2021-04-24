@@ -235,7 +235,6 @@ void ChangeDirCommand::execute() {
             int error = chdir(path);
             if(error == -1){//syscall failed
                 //print error, errno
-                //std::cout << "error: syscall failed. lastPWD: " << lastPwd << ", path: " << path << endl;
                 perror("smash error: chdir failed");
             }
             else{
@@ -267,8 +266,24 @@ void ChangeDirCommand::execute() {
 }
 
 ///func 5 - jobs
-void JobsCommand::execute() {
-
+void JobsCommand::execute(){
+    JobsList& jobs = getSmallShell().getJobsList();
+    std::vector<int> vec;
+    for(auto it = jobs.jobsMap.begin(); it != jobs.jobsMap.end(); ++it){
+        int status = waitpid(it->second.GetProcessID(),NULL,WNOHANG);
+        if (status > 0) { //this process is zombie (terminated), need to remove from jobs
+            vec.push_back(it->first);
+        }else{
+            if (it->second.getStatus() == STOPPED){
+                cout << "[" << it->first << "] " << it->second.GetCommand() << ": " << it->second.GetProcessID() << " " << it->second.getTime() << " (stopped)" <<endl;
+            } else {
+                cout << "[" << it->first << "] " << it->second.GetCommand() << ": " << it->second.GetProcessID() << " " << it->second.getTime() <<endl;
+            }
+        }
+    }
+    for (auto it = vec.begin(); it != vec.end(); ++it){ //removes the terminated process from the jobsList
+        jobs.jobsMap.erase(jobs.jobsMap.find(*it));
+    }
 }
 
 ///func 6 - kill
@@ -352,3 +367,12 @@ int JobsList::JobEntry::GetProcessID() {
 std::string JobsList::JobEntry::GetCommand() {
     return this->command;
 }
+
+STATUS JobsList::JobEntry::getStatus(){
+    return this->status;
+}
+
+time_t JobsList::JobEntry:: getTime(){
+    return this->time;
+}
+
