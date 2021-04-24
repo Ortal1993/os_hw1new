@@ -159,6 +159,10 @@ std::string SmallShell::GetPrompt() {
     return this->prompt;
 }
 
+JobsList& SmallShell::getJobsList() {
+    return this->jobsList;
+}
+
 Command::Command(const char *cmd_line): cmd_line(cmd_line), sms(SmallShell::getInstance()){
     //this->sms = SmallShell::getInstance();
 
@@ -219,7 +223,6 @@ void GetCurrDirCommand::execute() {
 //ChangeDirCommand::ChangeDirCommand(const char *cmd_line) :
                 //BuiltInCommand(cmd_line){
 //}
-
 void ChangeDirCommand::execute() {
     int numOfArgs = this->GetNumOfArgs();
     SmallShell& sm = getSmallShell();
@@ -235,7 +238,8 @@ void ChangeDirCommand::execute() {
             int error = chdir(path);
             if(error == -1){//syscall failed
                 //print error, errno
-                std::cout << "error: syscall failed. lastPWD: " << lastPwd << ", path: " << path << endl;
+                //std::cout << "error: syscall failed. lastPWD: " << lastPwd << ", path: " << path << endl;
+                perror("smash error: chdir failed");
             }
             else{
                 sm.setLastPwd(currentPwd);
@@ -243,13 +247,14 @@ void ChangeDirCommand::execute() {
             }
         } else if (arg == "-" && lastPwd == ""){
             //print error no OLDPWD
-            std::cout << "smash error: cd: OLDPWD not set"  << endl;
+            std::cerr << "smash error: cd: OLDPWD not set"  << endl;
         } else {
             const char * path = arg.c_str();
             int error = chdir(path);
             if(error == -1){//syscall failedl
                 //print error, errno
-                std::cout << "error: sysCallFail2"  << endl;
+                //std::cout << "error: sysCallFail2"  << endl;
+                perror("smash error: chdir failed");
             }
             else{
                 if (currentPwd == ""){//if *currentPwd is null, then it is the first time doing cd
@@ -267,35 +272,38 @@ void ChangeDirCommand::execute() {
 ///func 5 - jobs
 
 ///func 6 - kill
-/*void KillCommand::execute() {
+void KillCommand::execute() {
     int numOfArgs = this->GetNumOfArgs();
-    if (numOfArgs != 3) {///arguments[0] = command ///if we kill -  9 7 - is it legal?
+    if (numOfArgs != 3) {///arguments[0] = command ///if we get: kill -  9 7 - is it legal?
         cerr << "smash error: kill: invalid arguments" << endl;
     }
-    string numStr = GetArgument(1);
+    string signumStr = GetArgument(1);
     int i = 0;
-    while(numStr.at(i) == '-'){
+    while(signumStr.at(i) == '-'){
         i++;
     }
+    if(i == 0 || i > 1){
+        cerr << "smash error: kill: invalid arguments" << endl;
     if(i == 1){
-        numStr = numStr.substr(1);
-        int num = stoi(numStr);
-        if(num < 1 || num > 64){
-            //print error;
-        }else{
-            string jobStr = GetArgument(2);
-            int jobId = stoi(jobStr); ///std::invalid_argument
-            if(ptrJobs->GetJobsMap()->find(jobId) != ptrJobs->GetJobsMap()->end()){
-                cout << "signal number " << num << "was sent to pid" << ptrJobs->GetJobsMap()->find(jobId)->second.GetProcessID();
-                ptrJobs->GetJobsMap()->find(jobId)->second.SetSignal(num);///we need it?
+        signumStr = signumStr.substr(1);
+        int num = stoi(signumStr);
+
+        string jobidStr = GetArgument(2);
+        int jobId = stoi(jobidStr); ///std::invalid_argument
+        if(getSmallShell().getJobsList().getJobById(jobId) != nullptr){
+            int processID = getSmallShell().getJobsList().getJobById(jobId)->GetProcessID();
+            cout << "signal number " << num << "was sent to pid" << processID;
+            ptrJobs->GetJobsMap()->find(jobId)->second.SetSignal(num);///we need it?
+            int error = kill();
+            if(error == -1){
+                perror();
+            }
             }else{
                 cerr << "smash error: kill: job-id " << jobId << "does not exist" << endl;
             }
         }
-    }else{
-        //print error?
     }
-}*/
+}
 
 ///func 7 - fg
 
@@ -311,3 +319,15 @@ void ChangeDirCommand::execute() {
 }
 
 KillInvalidArg::KillInvalidArg() : SmashExceptions("smash error: kill: invalid arguments"){}*/
+JobsList::JobEntry* JobsList::getJobById(int jobId) {
+    pair<int, class JobsList::JobEntry> p = *this->jobsMap.find(jobId);
+    if(this->jobsMap.find(jobId) != *(jobsMap.end())){
+        map<int, class JobEntry>::iterator it = this->jobsMap.find(jobId);
+    }else{
+        return nullptr;
+    }
+}
+
+/*map<int, class JobsList::JobEntry>& JobsList::GetJobsMap() {
+    return *this->jobsMap;
+}*/

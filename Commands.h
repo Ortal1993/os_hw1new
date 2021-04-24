@@ -11,7 +11,7 @@
 enum STATUS{///???
     BACKGROUND = 0,
     STOPPED = 1,
-    FINISHED = 2
+    /*FINISHED = 2*/
 };
 
 class SmallShell;
@@ -90,15 +90,15 @@ class ChangeDirCommand : public BuiltInCommand {
 };
 
 class JobsList {///it should also be created once, no?
-    //private:
-        //std::map<int, class JobEntry> jobsMap;///the key is jobID
-        //int nextID;
+    private:
+        std::map<int, class JobEntry> jobsMap;///the key is jobID
+        int nextID;
     public:///???????
         class JobEntry {
-            //private:
+            private:
                 /*int jobID;*/
-                /*int processID;
-                int signal;
+                int processID;
+                /*int signal;*/
                 char* command;
                 time_t time;
                 STATUS status;
@@ -106,20 +106,20 @@ class JobsList {///it should also be created once, no?
                 JobEntry();
                 ~JobEntry();
                 int GetProcessID();
-                void SetSignal(int signal);*/
+                void SetSignal(int signal);
         };
-        public:
-        JobsList();//:jobsMap(jobsMap), nextID(0){};
+    public:
+        JobsList():jobsMap(jobsMap), nextID(0){};
         ~JobsList();
         void addJob(Command* cmd, bool isStopped = false);
         void printJobsList();
         void killAllJobs();
         void removeFinishedJobs();
-        JobEntry * getJobById(int jobId);
+        JobEntry* getJobById(int jobId);
         void removeJobById(int jobId);
-        JobEntry * getLastJob(int* lastJobId);
-        JobEntry *getLastStoppedJob(int *jobId);///???
-        //std::map<int, class JobEntry>* GetJobsMap();
+        JobEntry* getLastJob(int* lastJobId);
+        JobEntry* getLastStoppedJob(int *jobId);///???
+        std::map<int, class JobsList::JobEntry>& GetJobsMap();
         // TODO: Add extra methods or modify exisitng ones as needed
 };
 
@@ -134,14 +134,12 @@ class JobsList {///it should also be created once, no?
 };*/
 
 ///func 6 - kill
-/*class KillCommand : public BuiltInCommand {
-    private:
-        JobsList* ptrJobs;
+class KillCommand : public BuiltInCommand {
     public:
-        KillCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), ptrJobs(ptrJobs){};
+        KillCommand(const char* cmd_line): BuiltInCommand(cmd_line){};
         virtual ~KillCommand() {}
         void execute() override;
-};*/
+};
 
 ///func 7 - fg
 /*class ForegroundCommand : public BuiltInCommand {
@@ -196,8 +194,8 @@ class SmallShell {
         std::string lastPwd;
         std::string currentPwd;
         std::string prompt;
-        //JobsList jobsList;
-        SmallShell(): pid(getpid()), lastPwd(""), currentPwd(""), prompt("smash"){}//, jobsList(jobsList){}///getpid is always successful according to man
+        JobsList jobsList;
+        SmallShell(): pid(getpid()), lastPwd(""), currentPwd(""), prompt("smash"), jobsList(jobsList){}///getpid is always successful according to man
     public:
         class SmashExceptions;
         Command *CreateCommand(const char* cmd_line);
@@ -210,11 +208,12 @@ class SmallShell {
         ~SmallShell();
         void executeCommand(const char* cmd_line);
         //TODO: add extra methods as needed
-        std::string GetPrompt();
-        void setPrompt(std::string newPrompt) {prompt = newPrompt;}
         pid_t getPid() {return pid;}
         std::string getLastPwd() {return lastPwd;}
         std::string getCurrentPwd() {return currentPwd;}
+        std::string GetPrompt();
+        JobsList& getJobsList();
+        void setPrompt(std::string newPrompt) {prompt = newPrompt;}
         void setLastPwd(std::string pwd) {lastPwd = pwd;}
         void setCurrentPwd(std::string pwd) {currentPwd = pwd;}
 };

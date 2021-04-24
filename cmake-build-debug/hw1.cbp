@@ -8,38 +8,38 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/home/student/CLionProjects/os_hw1new/cmake-build-debug"/>
+				<Option working_dir="/home/student/Documents/hw1/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/home/student/CLionProjects/os_hw1new/cmake-build-debug"/>
+				<Option working_dir="/home/student/Documents/hw1/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/home/student/CLionProjects/os_hw1new/cmake-build-debug"/>
+				<Option working_dir="/home/student/Documents/hw1/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="os_hw11new">
-				<Option output="/home/student/CLionProjects/os_hw1new/cmake-build-debug/os_hw11new" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/student/CLionProjects/os_hw1new/cmake-build-debug"/>
+				<Option output="/home/student/Documents/hw1/cmake-build-debug/os_hw11new" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/student/Documents/hw1/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -54,15 +54,15 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 os_hw11new"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 os_hw11new"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="os_hw11new/fast">
-				<Option output="/home/student/CLionProjects/os_hw1new/cmake-build-debug/os_hw11new" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/student/CLionProjects/os_hw1new/cmake-build-debug"/>
+				<Option output="/home/student/Documents/hw1/cmake-build-debug/os_hw11new" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/student/Documents/hw1/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -77,29 +77,29 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 os_hw11new/fast"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/CLionProjects/os_hw1new/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 os_hw11new/fast"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/hw1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/student/CLionProjects/os_hw1new/Commands.cpp">
+		<Unit filename="/home/student/Documents/hw1/Commands.cpp">
 			<Option target="os_hw11new"/>
 		</Unit>
-		<Unit filename="/home/student/CLionProjects/os_hw1new/Commands.h">
+		<Unit filename="/home/student/Documents/hw1/Commands.h">
 			<Option target="os_hw11new"/>
 		</Unit>
-		<Unit filename="/home/student/CLionProjects/os_hw1new/signals.cpp">
+		<Unit filename="/home/student/Documents/hw1/signals.cpp">
 			<Option target="os_hw11new"/>
 		</Unit>
-		<Unit filename="/home/student/CLionProjects/os_hw1new/signals.h">
+		<Unit filename="/home/student/Documents/hw1/signals.h">
 			<Option target="os_hw11new"/>
 		</Unit>
-		<Unit filename="/home/student/CLionProjects/os_hw1new/smash.cpp">
+		<Unit filename="/home/student/Documents/hw1/smash.cpp">
 			<Option target="os_hw11new"/>
 		</Unit>
-		<Unit filename="/home/student/CLionProjects/os_hw1new/CMakeLists.txt">
+		<Unit filename="/home/student/Documents/hw1/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>
