@@ -7,6 +7,7 @@
 #include <iomanip>
 #include "Commands.h"
 #include <limits.h>
+#include <utility>
 
 using namespace std;
 
@@ -141,6 +142,9 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   else if (firstWord.compare("quit") == 0){
       return new QuitCommand(cmd_line);
   }
+  else {
+      return new ExternalCommand(cmd_line);
+  }
   return nullptr;
 }
 
@@ -191,6 +195,39 @@ string Command::GetArgument(int argNum) {
 
 int Command::GetNumOfArgs() {
     return this->arguments.size();
+}
+
+void ExternalCommand::execute(){
+
+    pid_t pid = fork();
+    if( pid == 0 ) {
+        // child process code goes here
+        setpgrp();
+        string toParse = (string)getCmd();
+        char * args = new char(sizeof (toParse.size()+3));
+        args[0] = '-';
+        args[1] = 'c';
+        args[2] = ' ';
+        for (int i = 0; i < toParse.size(); i++){
+            args[i+3] = toParse[i];
+        }
+        execv("/bin/bash",&args);
+    }
+    else{//father
+        int lastArgument = this->GetNumOfArgs();
+        string str = this->GetArgument(lastArgument - 1);
+        if (str != "&" || str[str.size()-1] != '&'){//if should run in foreground
+            waitpid(pid,NULL,NULL);
+        }
+        else{//should run in background
+            JobsList& jobs = getSmallShell().getJobsList();
+            JobsList::JobEntry * newJobEntry = new JobsList::JobEntry(pid, this->GetArgument(0),time(NULL),BACKGROUND);
+            int newJobId = jobs.nextID;
+            jobs.nextID++;
+            jobs.jobsMap.insert(std::pair<int,JobsList::JobEntry*>(newJobId,newJobEntry));//added the job to the job list
+        }
+    }
+
 }
 
 ///func 1 - showpid
@@ -270,14 +307,14 @@ void JobsCommand::execute(){
     JobsList& jobs = getSmallShell().getJobsList();
     std::vector<int> vec;
     for(auto it = jobs.jobsMap.begin(); it != jobs.jobsMap.end(); ++it){
-        int status = waitpid(it->second.GetProcessID(),NULL,WNOHANG);
+        int status = waitpid(it->second->GetProcessID(),NULL,WNOHANG);
         if (status > 0) { //this process is zombie (terminated), need to remove from jobs
             vec.push_back(it->first);
         }else{
-            if (it->second.getStatus() == STOPPED){
-                cout << "[" << it->first << "] " << it->second.GetCommand() << ": " << it->second.GetProcessID() << " " << it->second.getTime() << " (stopped)" <<endl;
+            if (it->second->getStatus() == STOPPED){
+                cout << "[" << it->first << "] " << it->second->GetCommand() << ": " << it->second->GetProcessID() << " " << difftime(it->second->getTime(), time(NULL)) << " (stopped)" <<endl;
             } else {
-                cout << "[" << it->first << "] " << it->second.GetCommand() << ": " << it->second.GetProcessID() << " " << it->second.getTime() <<endl;
+                cout << "[" << it->first << "] " << it->second->GetCommand() << ": " << it->second->GetProcessID() << " " << difftime(it->second->getTime(), time(NULL)) <<endl;
             }
         }
     }
@@ -336,9 +373,9 @@ void QuitCommand::execute() {
         SmallShell& sm = getSmallShell();
         int numJobs = sm.getJobsList().jobsMap.size();
         cout << "smash: sending SIGKILL signal to " << numJobs << " jobs:" << endl;
-        for(map<int, JobsList::JobEntry>::iterator it = sm.getJobsList().jobsMap.begin(); it != sm.getJobsList().jobsMap.end(); ++it){
-            int currJobPid = it->second.GetProcessID();
-            cout << currJobPid << ": " << it->second.GetCommand() << endl;
+        for(map<int, JobsList::JobEntry*>::iterator it = sm.getJobsList().jobsMap.begin(); it != sm.getJobsList().jobsMap.end(); ++it){
+            int currJobPid = it->second->GetProcessID();
+            cout << currJobPid << ": " << it->second->GetCommand() << endl;
             kill(currJobPid, 9);
         }
     }
@@ -354,7 +391,7 @@ KillInvalidArg::KillInvalidArg() : SmashExceptions("smash error: kill: invalid a
 
 JobsList::JobEntry* JobsList::getJobById(int jobId) {
     if(this->jobsMap.find(jobId)->first != jobsMap.end()->first){
-        return &this->jobsMap.find(jobId)->second;
+        return this->jobsMap.find(jobId)->second;
     }else{
         return nullptr;
     }

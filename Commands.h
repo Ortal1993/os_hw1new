@@ -31,6 +31,7 @@ class Command{
         std::string GetArgument(int argNum);
         int GetNumOfArgs();
         SmallShell& getSmallShell() {return this->sms;}
+        const char* getCmd (){return this->cmd_line;}
 };
 
 class BuiltInCommand : public Command {
@@ -41,7 +42,7 @@ class BuiltInCommand : public Command {
 
 class ExternalCommand : public Command {
     public:
-        ExternalCommand(const char* cmd_line);
+        ExternalCommand(const char* cmd_line) : Command(cmd_line){};
         virtual ~ExternalCommand() {}
         void execute() override;
 };
@@ -96,12 +97,12 @@ class JobsList {///it should also be created once, no?
             private:
                 /*int jobID;*/
                 /*int signal;*/
-                int processID;
+                pid_t processID;
                 std::string command;
                 time_t time;
                 STATUS status;
             public:
-                JobEntry():processID(processID), command(command), time(time), status(status){};///to change!
+                JobEntry(pid_t pid, std::string command, time_t time, STATUS status = BACKGROUND):processID(processID), command(command), time(time), status(status){};
                 ~JobEntry() = default;
                 int GetProcessID();
                 std::string GetCommand();
@@ -109,7 +110,7 @@ class JobsList {///it should also be created once, no?
                 time_t getTime();
                 /*void SetSignal(int signal);*/
         };
-        std::map<int, JobEntry> jobsMap;///the key is jobID
+        std::map<int, JobEntry*> jobsMap;///the key is jobID
         int nextID;
     public:
         JobsList(){};
