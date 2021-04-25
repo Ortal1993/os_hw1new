@@ -358,21 +358,39 @@ void KillCommand::execute() {
 void ForegroundCommand::execute() {
     int jobToFg;
     JobsList& jobs = getSmallShell().getJobsList();
-    if (GetNumOfArgs() == 1){//if no jobId was specified
+    if (GetNumOfArgs() > 2){
+        cerr << "smash error: fg: invalid arguments" << endl;
+        return;
+    } else if (GetNumOfArgs() == 1){//if no jobId was specified
         jobToFg = jobs.jobsMap.end()->first;
-    }
-    else if (GetNumOfArgs() == 0){
-        jobToFg = stoi(this->GetArgument(1));
+    } else if (GetNumOfArgs() == 2){
+        try {
+            jobToFg = stoi(this->GetArgument(1));
+        }
+        catch (const std::invalid_argument& ia){
+            cerr << "smash error: fg: invalid arguments" <<endl;
+            return;
+        }
     }
     JobsList::JobEntry * jobEntry = jobs.getJobById(jobToFg);
-    pid_t pidToFg = jobEntry->GetProcessID();
-    if (jobEntry->getStatus() == STOPPED){
-        kill(pidToFg, SIGCONT);
+    if (!jobEntry && GetNumOfArgs() == 2){//job was not found, no jobID in jobList
+        cerr << "smash error: fg: job-id " << jobToFg << " does not exist" << endl;
+        return;
     }
-    cout << jobEntry->GetCommand() << " : " << pidToFg << endl;
-    jobs.dyingJobsMap.insert(std::pair<int,JobsList::JobEntry*>(jobToFg,jobEntry));
-    jobs.jobsMap.erase(jobToFg);
-    waitpid(pidToFg, NULL, WUNTRACED);//WUNTRACED: also return if a child has stopped
+    else if (!jobEntry && GetNumOfArgs() == 1){
+        cerr << "smash error: fg: jobs list is empty" <<endl;
+        return;
+    }
+    else {
+        pid_t pidToFg = jobEntry->GetProcessID();
+        if (jobEntry->getStatus() == STOPPED) {
+            kill(pidToFg, SIGCONT);
+        }
+        cout << jobEntry->GetCommand() << " : " << pidToFg << endl;
+        jobs.dyingJobsMap.insert(std::pair<int, JobsList::JobEntry *>(jobToFg, jobEntry));
+        jobs.jobsMap.erase(jobToFg);
+        waitpid(pidToFg, NULL, WUNTRACED);//WUNTRACED: also return if a child has stopped
+    }
 }
 
 ///func 8 - bg
