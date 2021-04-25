@@ -111,6 +111,7 @@ class JobsList {///it should also be created once, no?
                 /*void SetSignal(int signal);*/
         };
         std::map<int, JobEntry*> jobsMap;///the key is jobID
+        std::map<int, JobEntry*> dyingJobsMap;
         int nextID;
     public:
         JobsList(){};

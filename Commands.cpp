@@ -356,7 +356,23 @@ void KillCommand::execute() {
 
 ///func 7 - fg
 void ForegroundCommand::execute() {
-
+    int jobToFg;
+    JobsList& jobs = getSmallShell().getJobsList();
+    if (GetNumOfArgs() == 1){//if no jobId was specified
+        jobToFg = jobs.jobsMap.end()->first;
+    }
+    else if (GetNumOfArgs() == 0){
+        jobToFg = stoi(this->GetArgument(1));
+    }
+    JobsList::JobEntry * jobEntry = jobs.getJobById(jobToFg);
+    pid_t pidToFg = jobEntry->GetProcessID();
+    if (jobEntry->getStatus() == STOPPED){
+        kill(pidToFg, SIGCONT);
+    }
+    cout << jobEntry->GetCommand() << " : " << pidToFg << endl;
+    jobs.dyingJobsMap.insert(std::pair<int,JobsList::JobEntry*>(jobToFg,jobEntry));
+    jobs.jobsMap.erase(jobToFg);
+    waitpid(pidToFg, NULL, WUNTRACED);//WUNTRACED: also return if a child has stopped
 }
 
 ///func 8 - bg
