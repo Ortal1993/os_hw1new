@@ -209,19 +209,20 @@ void ExternalCommand::execute(){
         args[1] = 'c';
         args[2] = ' ';
         for (int i = 0; i < toParse.size(); i++){
-            args[i+3] = toParse[i];
+            args[i+3] = toParse[i];//need to add " "
         }
         execv("/bin/bash",&args);
+        ///delete args?
     }
     else{//father
         int lastArgument = this->GetNumOfArgs();
-        string str = this->GetArgument(lastArgument - 1);
+        string str = this->GetArgument(lastArgument - 1);///what if there are many spaces before &
         if (str != "&" || str[str.size()-1] != '&'){//if should run in foreground
             waitpid(pid,NULL,NULL);
         }
         else{//should run in background
             JobsList& jobs = getSmallShell().getJobsList();
-            JobsList::JobEntry * newJobEntry = new JobsList::JobEntry(pid, this->GetArgument(0),time(NULL),BACKGROUND);
+            JobsList::JobEntry * newJobEntry = new JobsList::JobEntry(pid, (string)getCmd(),time(NULL),BACKGROUND);
             int newJobId = jobs.nextID;
             jobs.nextID++;
             jobs.jobsMap.insert(std::pair<int,JobsList::JobEntry*>(newJobId,newJobEntry));//added the job to the job list
