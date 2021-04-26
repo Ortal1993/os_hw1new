@@ -211,8 +211,8 @@ void ExternalCommand::execute(){
             args[i+3] = originalCmd[i];//need to add " "
         }
         execv("/bin/bash",&args);
-        sm.getJobsList().currJobInFg = pid;///???
-        cout << "pid child is:" << sm.getJobsList().currJobInFg << endl;
+        /*sm.getJobsList().currJobInFg = pid;///???
+        cout << "pid child is:" << sm.getJobsList().currJobInFg << endl;*/
         ///delete args?
     }
     else{//father
@@ -389,10 +389,10 @@ void ForegroundCommand::execute() {
             kill(pidToFg, SIGCONT);
         }
         cout << jobEntry->GetCommand() << " : " << pidToFg << endl;
-        getSmallShell().getJobsList().currJobInFg = pidToFg;
-        jobs.jobsMap.erase(jobToFg);
+        *jobs.currJobInFg = JobsList::JobEntry(*jobEntry);//copy constructor
+        jobs.jobsMap.erase(jobToFg);//Iterators, pointers and references referring to elements removed by the function are invalidated.
         waitpid(pidToFg, NULL, WUNTRACED);//WUNTRACED: also return if a child has stopped
-        getSmallShell().getJobsList().currJobInFg = -1;
+        //getSmallShell().getJobsList().currJobInFg = -1;
     }
 }
 

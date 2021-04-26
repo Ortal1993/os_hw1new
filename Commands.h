@@ -103,6 +103,7 @@ class JobsList {///it should also be created once, no?
                 STATUS status;
             public:
                 JobEntry(pid_t pid, std::string command, time_t time, STATUS status = BACKGROUND):processID(processID), command(command), time(time), status(status){};
+                JobEntry(const JobEntry& jobEntry) = default;
                 ~JobEntry() = default;
                 int GetProcessID();
                 std::string GetCommand();
@@ -112,11 +113,11 @@ class JobsList {///it should also be created once, no?
                 /*void SetSignal(int signal);*/
         };
         std::map<int, JobEntry*> jobsMap;///the key is jobID
-        int currJobInFg;///pid
+        JobEntry* currJobInFg;///pid
         int nextID;
         int lastStoppedJobID;
     public:
-        JobsList():jobsMap(jobsMap), currJobInFg(-1), nextID(0), lastStoppedJobID(-1){};//if lastStoppedJobID is -1 than no process has been stopped
+        JobsList():jobsMap(jobsMap), currJobInFg(nullptr), nextID(1), lastStoppedJobID(-1){};//if lastStoppedJobID is -1 than no process has been stopped
         ~JobsList() = default;
         void addJob(Command* cmd, bool isStopped = false);
         void printJobsList();
