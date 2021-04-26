@@ -95,7 +95,7 @@ class JobsList {///it should also be created once, no?
     public:
         class JobEntry {
             private:
-                /*int jobID;*/
+                int jobID;
                 /*int signal;*/
                 pid_t processID;
                 std::string command;
@@ -107,14 +107,16 @@ class JobsList {///it should also be created once, no?
                 int GetProcessID();
                 std::string GetCommand();
                 STATUS getStatus();
+                void setStatus(STATUS newStatus);
                 time_t getTime();
                 /*void SetSignal(int signal);*/
         };
         std::map<int, JobEntry*> jobsMap;///the key is jobID
-        std::map<int, JobEntry*> dyingJobsMap;
+        int currJobInFg;///pid
         int nextID;
+        int lastStoppedJobID;
     public:
-        JobsList(){};
+        JobsList():jobsMap(jobsMap), currJobInFg(-1), nextID(0), lastStoppedJobID(-1){};//if lastStoppedJobID is -1 than no process has been stopped
         ~JobsList() = default;
         void addJob(Command* cmd, bool isStopped = false);
         void printJobsList();
@@ -123,7 +125,9 @@ class JobsList {///it should also be created once, no?
         JobEntry* getJobById(int jobId);
         void removeJobById(int jobId);
         JobEntry* getLastJob(int* lastJobId);
-        JobEntry* getLastStoppedJob(int *jobId);///???
+        /*JobEntry* getLastStoppedJob(int jobId);///in original passing pointer to int*/
+        /*int getLastStoppedJobID();
+        void setLastStoppedJobID(int maxJobId);*/
         // TODO: Add extra methods or modify exisitng ones as needed
 };
 
@@ -188,7 +192,7 @@ class CatCommand : public BuiltInCommand {
 class SmallShell {
     // TODO: Add your data members
     private:
-        pid_t pid;
+        pid_t pid;///maybe not necessary
         std::string lastPwd;
         std::string currentPwd;
         std::string prompt;
