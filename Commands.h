@@ -99,10 +99,10 @@ class JobsList {///it should also be created once, no?
                 /*int signal;*/
                 pid_t processID;
                 std::string command;
-                time_t time;
+                time_t enterTime;
                 STATUS status;
             public:
-                JobEntry(pid_t pid, std::string command, time_t time, STATUS status = BACKGROUND):processID(processID), command(command), time(time), status(status){};
+                JobEntry(pid_t pid, std::string command, time_t time, STATUS status = BACKGROUND):processID(processID), command(command), enterTime(time), status(status){};
                 JobEntry(const JobEntry& jobEntry) = default;
                 ~JobEntry() = default;
                 int GetProcessID();

@@ -203,14 +203,11 @@ void ExternalCommand::execute(){
     if( pid == 0 ) { // child process code goes here
         setpgrp();
         string originalCmd = (string)getCmd();
-        char * args = new char(sizeof (originalCmd.size()+3));
-        args[0] = '-';
-        args[1] = 'c';
-        args[2] = ' ';
-        for (int i = 0; i < originalCmd.size(); i++){
-            args[i+3] = originalCmd[i];//need to add " "
-        }
-        execv("/bin/bash",&args);
+        char * args = new char(sizeof (originalCmd.size()));
+        strcpy(args,getCmd());
+        char* argv[] = {(char*)"/bin/bash", (char*)"-c", args, NULL};
+        execv(argv[0], argv);
+
         /*sm.getJobsList().currJobInFg = pid;///???
         cout << "pid child is:" << sm.getJobsList().currJobInFg << endl;*/
         ///delete args?
@@ -218,7 +215,7 @@ void ExternalCommand::execute(){
     else{//father
         int lastArgument = this->GetNumOfArgs();
         string str = this->GetArgument(lastArgument - 1);///what if there are many spaces before &
-        if (str != "&" || str[str.size()-1] != '&'){//if should run in foreground
+        if (str != "&" && str[str.size()-1] != '&'){//if should run in foreground
             waitpid(pid,NULL, WUNTRACED);///THE THIRD ARG WAS NULL - I CHANGED TO WUNTRACED
         }
         else{//should run in background
@@ -508,7 +505,7 @@ STATUS JobsList::JobEntry::getStatus(){
 }
 
 time_t JobsList::JobEntry:: getTime(){
-    return this->time;
+    return this->enterTime;
 }
 
 void JobsList::JobEntry::setStatus(STATUS newStatus) {
@@ -520,5 +517,5 @@ int JobsList::JobEntry::getJobID() {
 }
 
 void JobsList::JobEntry::setTime(){
-    this->time = time(NULL);
+    this->enterTime = time(NULL);
 }

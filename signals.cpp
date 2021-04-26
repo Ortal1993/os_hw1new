@@ -23,12 +23,12 @@ void ctrlZHandler(int sig_num) {
 
 void ctrlCHandler(int sig_num) {
     cout << "smash: got ctrl-C" << endl;
-    int currPidInFg = sm.getJobsList().currJobInFg;
+    /*int currPidInFg = sm.getJobsList().currJobInFg;
     if(currPidInFg != -1){
         kill(currPidInFg, SIGKILL);
         cout << "smash: process" << currPidInFg << "was killed" << endl;
         sm.getJobsList().currJobInFg = -1;
-    }
+    }*/
 }
 
 void alarmHandler(int sig_num) {
