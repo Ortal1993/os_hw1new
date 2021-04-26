@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/student/Documents/hw1/Commands.h
+vector
+-
+unistd.h
+-
+map
+-
+ctime
+-
+
+/home/student/Documents/hw1/signals.cpp
+iostream
+-
+signal.h
+-
+signals.h
+/home/student/Documents/hw1/signals.h
+Commands.h
+/home/student/Documents/hw1/Commands.h
+
+/home/student/Documents/hw1/signals.h
+
