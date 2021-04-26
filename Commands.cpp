@@ -514,3 +514,11 @@ time_t JobsList::JobEntry:: getTime(){
 void JobsList::JobEntry::setStatus(STATUS newStatus) {
     this->status = newStatus;
 }
+
+int JobsList::JobEntry::getJobID() {
+    return this->jobID;
+}
+
+void JobsList::JobEntry::setTime(){
+    this->time = time(NULL);
+}

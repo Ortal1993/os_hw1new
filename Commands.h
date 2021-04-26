@@ -110,6 +110,8 @@ class JobsList {///it should also be created once, no?
                 STATUS getStatus();
                 void setStatus(STATUS newStatus);
                 time_t getTime();
+                int getJobID();
+                void setTime();
                 /*void SetSignal(int signal);*/
         };
         std::map<int, JobEntry*> jobsMap;///the key is jobID
